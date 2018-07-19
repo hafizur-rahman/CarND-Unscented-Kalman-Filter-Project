@@ -69,6 +69,8 @@ UKF::UKF() {
   lambda_ = 3 - n_x_;
 
   Xsig_pred_ = MatrixXd(n_x_, 2 * n_aug_ + 1);
+
+  NIS_radar_ = NIS_laser_ = 0.0;
 }
 
 UKF::~UKF() {}
@@ -296,7 +298,7 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
   R << std_laspx_*std_laspx_, 0,
        0, std_laspy_*std_laspy_;
 
-  UpdateMeanAndCovariance(n_z, z, Zsig, R);
+  NIS_laser_ = UpdateMeanAndCovariance(n_z, z, Zsig, R);
 }
 
 /**
@@ -345,10 +347,10 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
           0, std_radphi_*std_radphi_, 0,
           0, 0, std_radrd_*std_radrd_;
 
-  UpdateMeanAndCovariance(n_z, z, Zsig, R);
+  NIS_radar_ = UpdateMeanAndCovariance(n_z, z, Zsig, R);
 }
 
-void UKF::UpdateMeanAndCovariance(int n_z, VectorXd &z, MatrixXd &Zsig, MatrixXd &R) {
+double UKF::UpdateMeanAndCovariance(int n_z, VectorXd &z, MatrixXd &Zsig, MatrixXd &R) {
   //mean predicted measurement
   VectorXd z_pred = VectorXd(n_z);
   z_pred.fill(0.0);
@@ -409,4 +411,9 @@ void UKF::UpdateMeanAndCovariance(int n_z, VectorXd &z, MatrixXd &Zsig, MatrixXd
   //update state mean and covariance matrix
   x_ = x_ + K * z_diff;
   P_ = P_ - K*S*K.transpose();
+
+  //calculate NIS
+  double NIS_ = z_diff.transpose() * S.inverse() * z_diff;
+
+  return NIS_;
 }

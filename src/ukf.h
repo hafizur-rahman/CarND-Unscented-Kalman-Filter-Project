@@ -11,7 +11,7 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
 class UKF {
-  void UpdateMeanAndCovariance(int n_z, VectorXd &z, MatrixXd &Zsig, MatrixXd &R);
+  double UpdateMeanAndCovariance(int n_z, VectorXd &z, MatrixXd &Zsig, MatrixXd &R);
 
 public:
 
@@ -69,6 +69,9 @@ public:
   ///* Sigma point spreading parameter
   double lambda_;
 
+  double NIS_radar_;
+
+  double NIS_laser_;
 
   /**
    * Constructor
