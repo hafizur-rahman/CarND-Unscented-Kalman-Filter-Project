@@ -11,6 +11,8 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
 class UKF {
+  void UpdateMeanAndCovariance(int n_z, VectorXd &z, MatrixXd &Zsig, MatrixXd &R);
+
 public:
 
   ///* initially set to false, set to true in first call of ProcessMeasurement
