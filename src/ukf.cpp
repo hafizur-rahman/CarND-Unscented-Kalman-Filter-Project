@@ -71,6 +71,12 @@ UKF::UKF() {
   Xsig_pred_ = MatrixXd(n_x_, 2 * n_aug_ + 1);
 
   NIS_radar_ = NIS_laser_ = 0.0;
+
+  // Measurement noise
+  R_radar_ = MatrixXd(3, 3);
+  R_radar_ << std_radr_*std_radr_, 0, 0,
+          0, std_radphi_*std_radphi_, 0,
+          0, 0, std_radrd_*std_radrd_;
 }
 
 UKF::~UKF() {}
@@ -341,13 +347,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
     Zsig(2,i) = (p_x*v1 + p_y*v2 ) / sqrt(p_x*p_x + p_y*p_y);   //r_dot
   }
 
-  // Measurement noise
-  MatrixXd R = MatrixXd(n_z,n_z);
-  R <<    std_radr_*std_radr_, 0, 0,
-          0, std_radphi_*std_radphi_, 0,
-          0, 0, std_radrd_*std_radrd_;
-
-  NIS_radar_ = UpdateMeanAndCovariance(n_z, z, Zsig, R);
+  NIS_radar_ = UpdateMeanAndCovariance(n_z, z, Zsig, R_radar_);
 }
 
 double UKF::UpdateMeanAndCovariance(int n_z, VectorXd &z, MatrixXd &Zsig, MatrixXd &R) {
