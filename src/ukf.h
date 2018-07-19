@@ -33,7 +33,11 @@ public:
   ///* predicted sigma points matrix
   MatrixXd Xsig_pred_;
 
+  // Measurement noise for radar
   MatrixXd R_radar_;
+
+  // Measurement noise for Lidar
+  MatrixXd R_laser_;
 
   ///* time when the state is true, in us
   long long time_us_;

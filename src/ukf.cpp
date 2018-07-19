@@ -77,6 +77,10 @@ UKF::UKF() {
   R_radar_ << std_radr_*std_radr_, 0, 0,
           0, std_radphi_*std_radphi_, 0,
           0, 0, std_radrd_*std_radrd_;
+
+  R_laser_ = MatrixXd(2, 2);
+  R_laser_ << std_laspx_*std_laspx_, 0,
+       0, std_laspy_*std_laspy_;
 }
 
 UKF::~UKF() {}
@@ -298,13 +302,8 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
     Zsig(0, i) = p_x;
     Zsig(1, i) = p_y;
   }
-
-  // Measurement noise
-  MatrixXd R = MatrixXd(n_z, n_z);
-  R << std_laspx_*std_laspx_, 0,
-       0, std_laspy_*std_laspy_;
-
-  NIS_laser_ = UpdateMeanAndCovariance(n_z, z, Zsig, R);
+  
+  NIS_laser_ = UpdateMeanAndCovariance(n_z, z, Zsig, R_laser_);
 }
 
 /**
