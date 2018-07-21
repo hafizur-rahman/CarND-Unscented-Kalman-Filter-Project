@@ -11,6 +11,8 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
 class UKF {
+  void NormalizeAngle(double& angle);
+  
   double UpdateMeanAndCovariance(int n_z, VectorXd &z, MatrixXd &Zsig, MatrixXd &R);
 
 public:
